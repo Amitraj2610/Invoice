@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    body { font-family: Arial, sans-serif; margin: 10px; background: #f6f7f9; font-size: 12px; }
+    .bill-container { border: 2px solid #000; padding: 12px; max-width: 1000px; margin: auto; background: #fff; }
+    .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 10px; }
+    .header img { max-height: 60px; display: block; margin: 0 auto; }
+    .header h3 { margin: 6px 0 0; color:#0056b3; }
+    .flex { display: flex; justify-content: space-between; gap: 10px; }
+    .box { border: 1px solid #000; padding: 6px; width: 48%; font-size: 12px; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; table-layout: fixed; }
+    th, td { border: 1px solid #000; padding: 4px; text-align: left; vertical-align: top; word-wrap: break-word; }
+    th { background: #f3f4f6; }
+
+    th:nth-child(1), td:nth-child(1) { width: 15px; }
+    th.lr-col, td.lr-col { width: 80px; }
+    th:nth-child(3), td:nth-child(3) { width: 100px; }
+    th.from-to, td.from-to { width: 200px; }
+    th:nth-child(5), td:nth-child(5) { width: 140px; }
+    th:nth-child(6), td:nth-child(6) { width: 70px; }
+    th:nth-child(7), td:nth-child(7) { width: 90px; }
+
+    input, select, textarea {
+        width: 100%; box-sizing: border-box; padding: 5px;
+        font-size: 12px; border: 1px solid #ccc; border-radius: 4px;
+        background-color: #f9f9f9; transition: border-color 0.3s;
+    }
+    input:focus, textarea:focus { outline: none; border-color: #007bff; }
+    textarea { resize: vertical; }
+
+    .footer { display: flex; justify-content: space-between; margin-top: 12px; gap: 10px; font-size: 12px; }
+    .bank, .auth { border: 1px solid #000; padding: 6px; width: 48%; font-size: 12px; }
+    em { font-size: 12px; display: block; margin-top: 8px; }
+
+    .controls { margin: 12px auto; max-width: 1000px; text-align: right; }
+    .btn { padding: 6px 14px; cursor: pointer; font-size: 13px; margin-left: 6px; border: none; border-radius: 6px; color: #fff; }
+    .btn-save { background-color: #488cd5; }
+    .btn-print { background-color: #d4bd6a; color: #000; }
+    .btn-load { background-color: #67cede; }
+    .btn-add { background-color: #5dc174; }
+    .btn-cancel { background-color: #ff6b6b; }
+    .btn:hover { opacity: 0.9; }
+
+    @media print {
+        .controls { display: none; }
+        body { background: #fff; margin: 0; }
+        td, th { font-size: 12px !important; padding: 4px !important; white-space: normal !important; word-break: break-word !important; }
+    }
+
+    .invoice-title { text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<div class="invoice-title">INVOICE</div>
+
+<div class="bill-container" id="invoiceBox">
+    <div class="header">
+        <img src="2.png" alt="SSL Logo">
+        <h3>SHREE SHYAM LOGISTICS</h3>
+        <div>Fleet Owners & Transport Contractors</div>
+        <div>SF-46 Omkar Complex, Vala Road, GIDC Ankleshwar, Dist. Bharuch, Gujarat - 393002</div>
+        <div>Email: shreeshyamlogistics@yahoo.com | Mob: 7600318660 / 9518115974</div>
+    </div>
+
+    <div class="flex">
+        <div class="box">
+            <label><strong>Party Name:</strong></label>
+            <select id="partySelect"><option value="">-- Loading parties --</option></select>
+            <br><br>
+            <label><strong>Bill To Party:</strong></label>
+            <textarea id="billTo" rows="5"></textarea>
+        </div>
+
+        <div class="box">
+            <label><strong>Bill No:</strong></label>
+            <input id="billNo" type="text">
+            <br><br>
+            <label><strong>Date:</strong></label>
+            <input id="billDate" type="date">
+            <br><br>
+            <label><strong>Our GSTN:</strong></label>
+            <input id="gstn" type="text" value="AETFS3053C">
+            <br><br>
+            <label><strong>SAC Code:</strong></label>
+            <input id="sac" type="text" value="996511">
+        </div>
+    </div>
+
+    <!-- Items Table (same as before) -->
+    <table id="itemTable">
+        <thead>
+            <tr>
+                <th>Sr</th>
+                <th class="lr-col">LR No / Date</th>
+                <th>Vehicle</th>
+                <th class="from-to">From / To</th>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody id="itemBody">
+            <tr>
+                <td>1</td>
+                <td class="lr-col">
+                    <input type="text" placeholder="LR No"><br>
+                    <input type="text" placeholder="dd-mm-yyyy">
+                </td>
+                <td><input type="text" placeholder="Vehicle"></td>
+                <td class="from-to">
+                    <input type="text" placeholder="From"><br>
+                    <input type="text" placeholder="To">
+                </td>
+                <td><input type="text" placeholder="Product"></td>
+                <td><input type="text" placeholder="Qty"></td>
+                <td><input type="number" name="amount" placeholder="Amount"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="6" style="text-align:right">Sub Total</td>
+                <td id="subTotal">₹0.00</td>
+            </tr>
+            <tr>
+                <td colspan="6" style="text-align:right">Detention</td>
+                <td><input id="detention" type="number" value="0"></td>
+            </tr>
+            <tr>
+                <td colspan="6" style="text-align:right">Loading / Hamali</td>
+                <td><input id="loading" type="number" value="0"></td>
+            </tr>
+            <tr>
+                <td colspan="6" style="text-align:right">Unloading / Hamali</td>
+                <td><input id="unloading" type="number" value="0"></td>
+            </tr>
+            <tr>
+                <td colspan="6" style="text-align:right"><strong>Grand Total</strong></td>
+                <td id="grandTotal">₹0.00</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <em id="inWords">Rupees Zero Only</em>
+
+    <div class="footer">
+        <div class="bank">
+            <strong>BANK DETAILS</strong><br>
+            HDFC BANK LTD<br>
+            ACCOUNT NO: 50200008813778<br>
+            IFSC CODE: HDFC0000088<br>
+            BHARUCH, GUJARAT 392001
+        </div>
+        <div class="auth">
+            <strong>For, SHREE SHYAM LOGISTICS</strong><br><br><br>
+            Authorised Signatory
+        </div>
+    </div>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+    <input type="text" id="loadBillNo" placeholder="Enter Bill No to load">
+    <button class="btn btn-load" id="loadButton">Load Invoice</button>
+    <button class="btn btn-add" id="addRowBtn">➕ Add Item</button>
+    <button class="btn btn-cancel" id="removeRowBtn">❌ Cancel Row</button>
+    <button class="btn btn-save" id="saveButton">💾 Save</button>
+    <button class="btn btn-print" onclick="window.print()">🖨 Print</button>
+</div>
+
+<!-- External JS -->
+<script type="module" src="invoice.js"></script>
+</body>
+</html>
